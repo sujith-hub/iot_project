@@ -1,0 +1,125 @@
+int button=A0;
+const int ping=9;
+unsigned long tpulse;
+float distance;
+int tilt=12;
+const int buzzer=11;
+const int lightsensor=7;
+const int bulb=8;
+byte leds=0;
+void setup()
+{
+  Serial.begin(9600);
+  pinMode(5, OUTPUT);
+  pinMode(4, OUTPUT);
+  pinMode(3, OUTPUT);
+  pinMode(2, OUTPUT);
+  pinMode(6, OUTPUT); 
+  pinMode(10, OUTPUT);
+  pinMode(13,OUTPUT);
+  pinMode(lightsensor,INPUT_PULLUP);
+  pinMode(tilt,INPUT);
+}
+void loop()
+{
+  int t=analogRead(button);
+  Serial.println("t=");
+  Serial.println(t);
+  int b=digitalRead(lightsensor);
+  Serial.println("b=");
+  Serial.println(b);
+  int reading=digitalRead(tilt);
+  if(t==1022)//forward
+  {
+    digitalWrite (2, LOW);
+    digitalWrite (3, HIGH);
+    digitalWrite (5, HIGH);
+    digitalWrite (4, LOW);
+    digitalWrite (6, HIGH);
+    digitalWrite (10, HIGH);
+  }
+  else if(t==682)
+  {
+    digitalWrite (2, HIGH);
+    digitalWrite (3, LOW);
+    digitalWrite (5, LOW);
+    digitalWrite (4, HIGH);
+    digitalWrite (6, HIGH);
+    digitalWrite (10, HIGH);
+  }
+  else if(t==511)
+  {
+    digitalWrite (2, HIGH);
+    digitalWrite (3, LOW);
+    digitalWrite (5, HIGH);
+    digitalWrite (4, LOW);
+    digitalWrite (6, HIGH);
+    digitalWrite (10, HIGH);
+  }
+  else if(t==171)
+  {
+    digitalWrite (2, LOW);
+    digitalWrite (3, HIGH);
+    digitalWrite (5, LOW);
+    digitalWrite (4, HIGH);
+    digitalWrite (6, HIGH);
+    digitalWrite (10, HIGH);
+    delay(300);
+  }
+  else if(t==341)
+  {
+    digitalWrite (2, LOW);
+    digitalWrite (3, LOW);
+    digitalWrite (5, LOW);
+    digitalWrite (4, LOW);
+  }
+  calculadist();
+  if(distance<50)
+  {
+    tone(buzzer,200,100);
+    digitalWrite (2, LOW);
+    digitalWrite (3, LOW);
+    digitalWrite (5, LOW);
+    digitalWrite (4, LOW);
+    digitalWrite (13, HIGH);
+    delay(100);
+  }
+  else if(distance>=50)
+  {
+    noTone(buzzer);
+  }
+  
+  if(b==HIGH)
+  {
+    digitalWrite(bulb,HIGH);
+  }
+  else
+  {
+    digitalWrite(bulb,LOW);
+  }
+  if(reading==HIGH)
+  {
+    tone(buzzer,200,100);
+    digitalWrite (2, LOW);
+    digitalWrite (3, LOW);
+    digitalWrite (5, LOW);
+    digitalWrite (4, LOW);
+    delay(1000);
+  }
+  else
+  {
+    noTone(buzzer);
+  }
+}
+void calculadist(){
+  pinMode(ping,OUTPUT);
+  digitalWrite(ping, LOW);
+  digitalWrite(ping, HIGH);
+  delayMicroseconds(2);
+  digitalWrite(ping, LOW);
+  delayMicroseconds(10);
+  pinMode(ping,INPUT);
+  tpulse =  pulseIn(ping, HIGH);  
+  distance =(tpulse)*0.0175;
+  Serial.println(distance);
+}
